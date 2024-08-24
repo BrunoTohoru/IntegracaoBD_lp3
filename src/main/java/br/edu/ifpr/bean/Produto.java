@@ -20,11 +20,14 @@ public class Produto {
         this.categoria = categoria;
     }
 
-    public Categoria getCategoria_id() {
+    public Produto() {
+    }
+
+    public Categoria getCategoria() {
         return categoria;
     }
 
-    public void setCategoria_id(Categoria categoria) {
+    public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
     }
     

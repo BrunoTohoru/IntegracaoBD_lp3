@@ -17,6 +17,6 @@ CREATE TABLE IF NOT EXISTS produto (
     id INT NOT NULL AUTO_INCREMENT,
     descricao VARCHAR(45) NOT NULL,
     categoria_id INT NOT NULL,
-    FOREIGN KEY (categoria_id) REFERENCES categoria(id) ON DELETE CASCADE,
+    FOREIGN KEY (categoria_id) REFERENCES categoria(id),
     PRIMARY KEY (id)
 );

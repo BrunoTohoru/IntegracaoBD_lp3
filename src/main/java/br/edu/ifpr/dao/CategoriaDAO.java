@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -52,20 +53,24 @@ public class CategoriaDAO implements Dao<Integer, Categoria>{
     @Override
     public Categoria retrieve(Integer pk) {
         Categoria categoria = null;
-        String sql = "SELECT id, descricao FROM categoria WHERE id = ?;";
-        try {
-            PreparedStatement query = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            query.setInt(1, pk);
-            ResultSet rs = query.executeQuery();
-            if(rs.next()){
-                categoria = new Categoria();
-                categoria.setId(rs.getInt("id"));
-                categoria.setDescricao(rs.getString("descricao"));
+        
+        if (pk != null){
+            String sql = "SELECT id, descricao FROM categoria WHERE id = ?;";
+            try {
+                PreparedStatement query = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                query.setInt(1, pk);
+                ResultSet rs = query.executeQuery();
+                if(rs.next()){
+                    categoria = new Categoria();
+                    categoria.setId(rs.getInt("id"));
+                    categoria.setDescricao(rs.getString("descricao"));
+                }
+                query.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
             }
-            query.close();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
         }
+        
         return categoria;
     }
     
@@ -106,12 +111,40 @@ public class CategoriaDAO implements Dao<Integer, Categoria>{
 
     @Override
     public List<Categoria> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        List<Categoria> categorias = new LinkedList<Categoria>();
+        String sql = "SELECT id, descricao FROM categoria;";
+        try {
+            PreparedStatement query = con.prepareStatement(sql);
+            ResultSet rs = query.executeQuery();
+            while(rs.next()){
+                Categoria categoria = new Categoria();
+                categoria.setId(rs.getInt("id"));
+                categoria.setDescricao(rs.getString("descricao"));
+                
+                categorias.add(categoria);
+            }
+            query.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return categorias;
     }
     
     public static void main(String[] args) {
         
         CategoriaDAO dao = new CategoriaDAO(ConnectionFactory.createConnectionToMySQL());
-        dao.delete(1);
+        
+        List<Categoria> categorias = dao.findAll();
+        
+        System.out.println(categorias);
+        System.out.println(categorias.size());
+        
+        /**
+         * Categoria c = new Categoria();
+         * c.setDescricao("caminhão");
+         *
+         * dao.create(c); 
+         */
+        
     }
 }
