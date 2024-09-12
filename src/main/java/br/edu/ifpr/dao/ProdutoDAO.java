@@ -6,62 +6,78 @@ package br.edu.ifpr.dao;
 
 import br.edu.ifpr.bean.Categoria;
 import br.edu.ifpr.bean.Produto;
+import br.edu.ifpr.util.ConnectionFactory;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
  *
- * @author Bruno
+ * @author efbaro
  */
 public class ProdutoDAO implements Dao<Integer, Produto>{
 
     protected Connection con;
+
+    public ProdutoDAO(Connection con) {
+        this.con = con;
+    }
+
     
     @Override
     public void create(Produto entity) {
-        String sql = "INSERT INTO Produto (descricao, categoria_id) VALUES (?, ?);";
         
-        try{
+        String sql = "INSERT INTO produto (descricao, categoria_id) VALUES (?, ?);";
+        
+        try {
             PreparedStatement query = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             query.setString(1, entity.getDescricao());
             
             CategoriaDAO daoCategoria = new CategoriaDAO(con);
             
-            if(entity.getCategoria().getId() <= 0){
+            // Se a categoria dentro do produto não estiver 
+            // cadastrado no banco
+            if (entity.getCategoria().getId() <= 0) {
+                // Cadastra a categoria no banco
                 daoCategoria.create(entity.getCategoria());
-            }
-            
+            } 
+
             query.setInt(2, entity.getCategoria().getId());
             query.executeUpdate();
             
             ResultSet rs = query.getGeneratedKeys();
             
-            if(rs.next()){
-                //pega o ID gerado pelo banco de dados para a nova categoria gravada.
+            if (rs.next()) {
+                // Pega o id gerado pelo banco de dados para a
+                // nova categoria gravada.
                 int id = rs.getInt(1);
                 entity.setId(id);
             }
-            
             query.close();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
     @Override
     public Produto retrieve(Integer pk) {
+        
         Produto produto = null;
-        String sql = "SELECT id, descricao, categoria_id FROM produto WHERE id = ?;";
+        
+        String sql = "SELECT id, descricao, categoria_id FROM produto WHERE id = ?";
+        
         try {
-            PreparedStatement query = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement query = con.prepareStatement(sql);
             query.setInt(1, pk);
             ResultSet rs = query.executeQuery();
+            
             CategoriaDAO daoCategoria = new CategoriaDAO(con);
-            if(rs.next()){
+            
+            if (rs.next()) {
                 produto = new Produto();
                 produto.setId(rs.getInt("id"));
                 produto.setDescricao(rs.getString("descricao"));
@@ -75,19 +91,47 @@ public class ProdutoDAO implements Dao<Integer, Produto>{
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
+        
         return produto;
     }
 
     @Override
     public void update(Produto entity) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        
+        String sql = "UPDATE Produto SET descricao = ?, categoria_id = ? WHERE id = ?";
+        
+        try {
+            PreparedStatement query = con.prepareStatement(sql);
+            query.setString(1, entity.getDescricao());
+            
+            CategoriaDAO daoCategoria = new CategoriaDAO(con);
+            
+            // Se a categoria dentro do produto não estiver 
+            // cadastrado no banco
+            if (entity.getCategoria().getId() <= 0) {
+                // Cadastra a categoria no banco
+                daoCategoria.create(entity.getCategoria());
+            } 
+            
+            query.setInt(2, entity.getCategoria().getId());
+    
+            query.setInt(3, entity.getId());
+            
+            query.executeUpdate();
+            
+            query.close();
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @Override
     public void delete(Integer pk) {
-        String sql = "DELETE FROM Produto WHERE id = ?;";
         
-        try{
+        String sql = "DELETE FROM produto WHERE id = ?";
+        
+        try {
             PreparedStatement query = con.prepareStatement(sql);
             query.setInt(1, pk);
             
@@ -95,14 +139,80 @@ public class ProdutoDAO implements Dao<Integer, Produto>{
             
             query.close();
             
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
     @Override
-    public List<Produto> findAll() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public List<Produto> findALL() {
+       
+        List<Produto> produtos = new LinkedList<Produto>();
+        
+        String sql = "SELECT id, descricao, categoria_id FROM produto";
+        
+        try {
+            PreparedStatement query = con.prepareStatement(sql);
+            ResultSet rs = query.executeQuery();
+            
+            CategoriaDAO daoCategoria = new CategoriaDAO(con);
+            
+            while (rs.next()) {
+                 Produto produto = new Produto();
+                 produto.setId(rs.getInt("id"));
+                 produto.setDescricao(rs.getString("descricao"));
+                 
+                 int id_categoria = rs.getInt("categoria_id");
+                 Categoria categoria = daoCategoria.retrieve(id_categoria);
+                
+                 produto.setCategoria(categoria);
+                 
+                 produtos.add(produto);
+            }
+            
+            query.close();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        
+        return produtos;
+    }
+    
+    
+    public static void main(String[] args) {
+        
+        /*
+        Produto p = new Produto();
+        p.setDescricao("Peça X");
+        
+        Categoria c = new Categoria();
+        c.setDescricao("Bicicleta");
+        
+        p.setCategoria(c);
+        
+        ProdutoDAO dao = new ProdutoDAO(ConnectionFactory.createConnectionToMySQL());
+        dao.create(p);
+        */
+        
+        /*
+        Produto p = new Produto();
+        p.setDescricao("Peça Y");
+        
+        CategoriaDAO daoCategoria = new CategoriaDAO(ConnectionFactory.createConnectionToMySQL());
+        Categoria categoriaMoto = daoCategoria.retrieve(2);
+        
+        p.setCategoria(categoriaMoto);
+        
+        ProdutoDAO dao = new ProdutoDAO(ConnectionFactory.createConnectionToMySQL());
+        dao.create(p);
+        */
+        
+         ProdutoDAO dao = new ProdutoDAO(ConnectionFactory.createConnectionToMySQL());
+         Produto p = dao.retrieve(1);
+         
+         dao.delete(p.getId());
+
+        
     }
     
 }

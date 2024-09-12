@@ -16,5 +16,5 @@ public interface Dao<PK, T> {
     public T retrieve(PK pk);
     public void update(T entity);
     public void delete(PK pk);
-    public List<T> findAll();
+    public List<T> findALL();
 }

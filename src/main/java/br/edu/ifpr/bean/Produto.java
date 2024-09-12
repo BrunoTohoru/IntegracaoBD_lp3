@@ -22,15 +22,9 @@ public class Produto {
 
     public Produto() {
     }
-
-    public Categoria getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
-    }
     
+    
+
     public int getId() {
         return id;
     }
@@ -46,6 +40,20 @@ public class Produto {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    @Override
+    public String toString() {
+        return "id: " + id + ", descricao: " + descricao;
+    }
+    
     
     
 }

@@ -13,44 +13,49 @@ import java.sql.SQLException;
  * Usuário: root
  * Senha: ""
  * 
- * Utilizamos esta estrutura para evitar repetição de codigo
- * e simplifacar a obtenção de conexão com o banco de dados.
+ * Utilizamos essa estrutura para evitar repetição de código
+ * e simplificar a obtenção de conexão com o banco de dados
  * 
- * @Bruno TS
+ * @author Everton Baro
  */
 public class ConnectionFactory {
     
-    //Nome do usuário do MySQL
+    // Nome do usuário do MySQL 
     private static final String USERNAME = "root";
     
-    //Senha do MySQL
+    // Senha do Mysql
     private static final String PASSWORD = "";
     
-    //String de conexão com o banco de dados
-    //Porta e nome do banco de dados no qual pretende-se conectar
+    // String de conexão com o banco de dados
+    // Porta e nome do banco de dados no qual pretende-se se conectar
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/ifpr";
     
-    public static Connection createConnectionToMySQL(){
+    public static Connection createConnectionToMySQL() {
         
-        try{
-            
-            // Criar uma conexão com o banco de dadoS
+        try {
+            // Cria a conexão com banco de dados.
             Connection connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
             return connection;
-        }catch(SQLException ex){
-            System.out.println("Erro de conexão com o BD: "+ ex.getMessage());
-            System.out.println(USERNAME);
+            
+        } catch (SQLException e) {
+            System.out.println("Não foi possível conectar-se ao Banco de Dados");
             System.out.println(DATABASE_URL);
+            System.out.println(e.getMessage());
             return null;
         }
     }
     
     public static void main(String[] args) {
+        
         Connection con = createConnectionToMySQL();
-        if (con != null){
-            System.out.println("Conexão foi! " + con);
-        }else{
-            System.out.println("Não deu! Fudeu!");
+        
+        if (con != null) {
+            System.out.println("Conexão obtida com sucesso!" + con);
+        } else {
+            System.out.println("Não foi possível fazer a conexão.");
         }
+        
     }
+    
+    
 }
