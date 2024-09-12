@@ -48,6 +48,11 @@ public class ProdutoTableModel extends AbstractTableModel{
         this.dados = produtos;
         this.fireTableDataChanged();
     }
+    
+    public void remove(Produto p){
+        this.dados.remove(p);
+        this.fireTableDataChanged();
+    }
 
     @Override
     public Object getValueAt(int linha, int coluna) {

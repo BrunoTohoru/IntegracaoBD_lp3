@@ -101,6 +101,7 @@ public class CadastroProdutoPanel extends JPanel {
         lblProduto = new javax.swing.JLabel();
         btnCadastrar = new javax.swing.JButton();
         btnEditar = new javax.swing.JButton();
+        btnExluir = new javax.swing.JButton();
 
         lblID.setText("ID");
 
@@ -137,6 +138,13 @@ public class CadastroProdutoPanel extends JPanel {
             }
         });
 
+        btnExluir.setText("Excluir");
+        btnExluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExluirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -164,6 +172,8 @@ public class CadastroProdutoPanel extends JPanel {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnExluir)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnEditar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCadastrar)))
@@ -187,7 +197,8 @@ public class CadastroProdutoPanel extends JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrar)
-                    .addComponent(btnEditar))
+                    .addComponent(btnEditar)
+                    .addComponent(btnExluir))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                 .addComponent(lblProduto)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -224,6 +235,16 @@ public class CadastroProdutoPanel extends JPanel {
         }
     }//GEN-LAST:event_btnEditarActionPerformed
 
+    private void btnExluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExluirActionPerformed
+        Produto produtoSelecionado = tbm.get(tblProduto.getSelectedRow());
+        ProdutoDAO dao = new ProdutoDAO(ConnectionFactory.createConnectionToMySQL());
+        dao.delete(produtoSelecionado.getId());
+        System.out.println(produtoSelecionado);
+        tbm.remove(produtoSelecionado);
+        limpaTela();
+        produtoSelecionado = null;
+    }//GEN-LAST:event_btnExluirActionPerformed
+
     
     private void limpaTela() {
         tfID.setText("");
@@ -234,6 +255,7 @@ public class CadastroProdutoPanel extends JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCadastrar;
     private javax.swing.JButton btnEditar;
+    private javax.swing.JButton btnExluir;
     private javax.swing.JComboBox<Categoria> cbCategoria;
     private javax.swing.JLabel lblCategoria;
     private javax.swing.JLabel lblDescricao;
