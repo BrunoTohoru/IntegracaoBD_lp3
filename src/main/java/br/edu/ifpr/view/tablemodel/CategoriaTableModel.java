@@ -1,28 +1,23 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.edu.ifpr.view.tablemodel;
 
-import br.edu.ifpr.bean.Produto;
+import br.edu.ifpr.bean.Categoria;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.;
 import javax.swing.table.AbstractTableModel;
 
 /**
  *
  * @author Aluno
  */
-public class ProdutoTableModel extends AbstractTableModel{
+public class CategoriaTableModel extends AbstractTableModel{
 
-    private List<Produto> dados = new LinkedList<Produto>();
+    private List<Categoria> dados = new LinkedList<Categoria>();
     private String[] colunas = {"ID", "Descrição"};
     
-    
-    public Produto get(int linha) {
+    public Categoria get(int linha) {
         return dados.get(linha);
     }
-
     @Override
     public int getRowCount() {
         return dados.size();
@@ -38,17 +33,18 @@ public class ProdutoTableModel extends AbstractTableModel{
         return colunas[coluna];
     }
     
-    public void add(Produto p) {
+    public void add(Categoria p) {
         this.dados.add(p);
         this.fireTableDataChanged();
+        
     }
     
-    public void addList(List<Produto> produtos) {
-        this.dados = produtos;
+    public void addList(List<Categoria> categorias) {
+        this.dados = categorias;
         this.fireTableDataChanged();
     }
     
-    public void remove(Produto p){
+    public void remove(Categoria p){
         this.dados.remove(p);
         this.fireTableDataChanged();
     }
@@ -56,13 +52,13 @@ public class ProdutoTableModel extends AbstractTableModel{
     @Override
     public Object getValueAt(int linha, int coluna) {
         
-        Produto produto = dados.get(linha);
+        Categoria categoria = dados.get(linha);
         
         switch (coluna) {
             case 0:
-                return produto.getId();
+                return categoria.getId();
             case 1:
-                return produto.getDescricao();
+                return categoria.getDescricao();
             default:
                 return null;
         }

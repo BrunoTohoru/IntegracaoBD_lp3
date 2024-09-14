@@ -14,5 +14,4 @@ CREATE TABLE IF NOT EXISTS produto (
     PRIMARY KEY (id),
     FOREIGN KEY (categoria_id)
         REFERENCES categoria(id)
-        ON DELETE CASCADE
 );
